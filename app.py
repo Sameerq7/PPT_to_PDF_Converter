@@ -1,10 +1,14 @@
 from flask import Flask, request, render_template
 import os
 import re
-import comtypes.client
 from PyPDF2 import PdfMerger
 from datetime import datetime
-import pythoncom
+import platform
+
+if platform.system() == "Windows":
+    import pythoncom
+    import comtypes.client
+
 
 app = Flask(__name__)
 
@@ -23,6 +27,11 @@ def get_ppt_files_from_directory(input_dir):
     return ppt_files
 
 def convert_ppt_to_pdf(ppt_file, pdf_file):
+    
+    if platform.system() != "Windows":
+        print("PowerPoint-to-PDF conversion is only supported on Windows.")
+        return
+    
     if not os.path.exists(ppt_file):
         print(f"File not found: {ppt_file}")
         return

@@ -75,6 +75,10 @@ def process_folder():
     folder_path = request.form['folder_path']
     folder_path = correct_path(folder_path)  # Correct the provided path
 
+    print(f"Folder path used: {folder_path}")
+    if not os.path.isdir(folder_path):
+        return f"The folder path {folder_path} does not exist."
+
     ppt_files = get_ppt_files_from_directory(folder_path)
     if not ppt_files:
         return f"No PPT files found in the specified folder: {folder_path}"

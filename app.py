@@ -13,10 +13,16 @@ if platform.system() == "Windows":
 app = Flask(__name__)
 
 def correct_path(path):
-    path = path.strip("'").strip('"')  # Remove unnecessary quotes
-    path = re.sub(r'[\\\/]+', r'/', path)  # Normalize slashes for Linux
+    # Remove unnecessary quotes
+    path = path.strip("'").strip('"')  
+    # Ensure using Linux-style slashes
+    path = re.sub(r'[\\]+', r'/', path)  
+    # If it's an absolute path (including C:\), strip that prefix
+    if path[1:3] == ':/' or path.startswith("C:/"):
+        path = path[2:]  # Remove the C:/
     path = os.path.expandvars(path)  # Expand environment variables
-    return os.path.abspath(path)  # Convert to absolute path
+    return os.path.abspath(path)  # Return the absolute path
+ # Convert to absolute path
 
 
 def get_ppt_files_from_directory(input_dir):

@@ -14,9 +14,10 @@ app = Flask(__name__)
 
 def correct_path(path):
     path = path.strip("'").strip('"')  # Remove unnecessary quotes
-    path = re.sub(r'[\\\/]+', r'\\', path)  # Normalize slashes
+    path = re.sub(r'[\\\/]+', r'/', path)  # Normalize slashes for Linux
     path = os.path.expandvars(path)  # Expand environment variables
     return os.path.abspath(path)  # Convert to absolute path
+
 
 def get_ppt_files_from_directory(input_dir):
     if not os.path.isdir(input_dir):

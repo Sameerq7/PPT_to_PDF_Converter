@@ -97,6 +97,10 @@ def process_folder():
 
 @app.route('/merge_pdfs', methods=['POST'])
 def merge_pdfs_view():
+    import webbrowser
+    import subprocess
+    import sys
+
     folder_path = request.form['folder_path']
     folder_path = correct_path(folder_path)  # Correct the provided path
 
@@ -117,11 +121,40 @@ def merge_pdfs_view():
         
         # Merge the PDF files
         merge_pdfs(pdf_files, output_pdf_path)
-        return f"Merged PDF saved as: {output_pdf_path}"
+
+        # Construct the file URL
+        file_url = f"file:///{output_pdf_path.replace(os.sep, '/')}"
+
+        # Use a specific browser to open the file
+        try:
+            # Explicitly open in Chrome
+            subprocess.run(["start", "chrome", file_url], shell=True)
+        except Exception:
+            try:
+                # Fallback to Edge
+                subprocess.run(["start", "msedge", file_url], shell=True)
+            except Exception:
+                # If no browser is specified, fallback to default
+                webbrowser.open(file_url)
+
+        return f"Merged PDF saved as: {output_pdf_path} and opened in the browser."
     else:
         return "No PDF files found to merge in the 'PDFs' folder."
 
 
+
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    import webbrowser
+    from threading import Timer
+
+    # Define the URL to open
+    port = int(os.environ.get('PORT', 5000))
+    url = f"http://127.0.0.1:{port}/"
+
+    # Timer to open the URL in the default web browser
+    Timer(1, lambda: webbrowser.open(url)).start()
+
+    app.run(host='0.0.0.0', port=port)
+
 
